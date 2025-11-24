@@ -1,1 +1,5 @@
 # Final-Project-CISC121
+Algorithm selected:
+I chose to use merge sort for my algorithm of choice because first it is quite good at dealing with larger input sizes as it has a time complexity of O(nlogn).
+- It also demonstrates a divide and conquer algorithm which I understand more than other algorithms. 
+- It is also easy to test edge cases. 
