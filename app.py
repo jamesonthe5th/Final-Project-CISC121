@@ -1,87 +1,88 @@
+#!/usr/bin/env python3
+from typing import List, Tuple
 
+import gradio as gr
 
+def mergesort(a: List[int], steps: List[str]) -> List[int]:
+    """Takes an unsorted list and sorts it using merge sort while recording steps."""
+    steps.append(f"Merge sort initiated on {a}")
 
-def mergesort(a,steps):
-  """ Takes unsorted list and sorts using merge sort and merge"""
-  steps.append("Merge sort initiated on {a}")
-  
-  if len(a) < = 1:
-    steps.append("Reached length of 1 or 0 ({a}); list is already sorted; returning unchanged list")
-    return a #already sorted array
+    if len(a) <= 1:
+        steps.append(f"Reached length of 1 or 0 ({a}); list is already sorted; returning unchanged list")
+        return a  # already sorted array
 
-  mid = len(a) //2
-  left = a[:mid] 
-  right = a[mid:]#split into two halves
-  steps.append("Dividing into two halfs \n Left half: {left}\n Right half:{right}")
+    mid = len(a) // 2
+    left = a[:mid]
+    right = a[mid:]  # split into two halves
+    steps.append(f"Dividing into two halves\n Left half: {left}\n Right half: {right}")
 
-  #recursive sorting part:
-  steps.append("Recursively sorting the left half: {left}")
-  left_sort = mergesort(left,steps)
-  
-  steps.append("Recursively sorting the right half: {right}")
-  right_sort = mergesort(right,steps)
+    # recursive sorting part:
+    steps.append(f"Recursively sorting the left half: {left}")
+    left_sort = mergesort(left, steps)
 
-  return merge(left_sort,right_sort,steps) #call other function to return merged list
+    steps.append(f"Recursively sorting the right half: {right}")
+    right_sort = mergesort(right, steps)
 
-def merge(left,right, steps):
-  steps.append{"Inititating the merge between the sorted left: {left} and right: {right} arrays")
-  result = [] #initialize list
-  i = j = 0 #set equal to 0
+    return merge(left_sort, right_sort, steps)  # call other function to return merged list
 
-  while i < len(left) and j < len(right): #compare elements and append the smaller
-    if left[i] < right[j]:
-      result.append(left[i])
-      steps.append("Comparing {left[i]} left and {right[j]} right\n {left[i]} is smaller than; adding to result: {result}")
-      i +=1 #increment i by 1
-    else:
-      result.append(right[j])
-      steps.append("Comparing {right[j]} right and {left[i]} left\n {right[j]} is smaller than; adding to the result: {result}")
-      j +=1 #increment j by one
+def merge(left: List[int], right: List[int], steps: List[str]) -> List[int]:
+    steps.append(f"Initiating the merge between the sorted left: {left} and right: {right} arrays")
+    result: List[int] = []
+    i = j = 0
 
+    while i < len(left) and j < len(right):
+        # compare elements and append the smaller
+        if left[i] < right[j]:
+            result.append(left[i])
+            steps.append(f"Comparing {left[i]} (left) and {right[j]} (right) -> {left[i]} is smaller; adding to result: {result}")
+            i += 1
+        else:
+            result.append(right[j])
+            steps.append(f"Comparing {right[j]} (right) and {left[i]} (left) -> {right[j]} is smaller; adding to result: {result}")
+            j += 1
 
-  while i < len(left):
-    result.append(left[i])
-    steps.append("Right list is empty\n Adding leftover element {left[i]} from left list to result {result}")
-    i +=1
+    while i < len(left):
+        result.append(left[i])
+        steps.append(f"Right list is empty; adding leftover element {left[i]} from left list to result {result}")
+        i += 1
 
-  while j < len(right):
-    result.append(right[j])
-    steps.append("Left list is empty \n Adding leftover element {right[i]} from right list to result {result}")
-    j+=1
+    while j < len(right):
+        result.append(right[j])
+        steps.append(f"Left list is empty; adding leftover element {right[j]} from right list to result {result}")
+        j += 1
 
-  steps.append("Merging complete. Final merged list: {result}")
+    steps.append(f"Merging complete. Final merged list: {result}")
+    return result
 
+def gradio_merge_sort(input_text: str) -> Tuple[str, str]:
+    """Gradio wrapper: parses input_text into integers and runs mergesort with steps returned."""
+    if not input_text or not input_text.strip():
+        return "", "Error: input is empty. Enter integers separated by spaces or commas."
 
+    # accept commas or spaces as separators
+    parts = input_text.replace(",", " ").split()
+    try:
+        arr = [int(x) for x in parts]
+    except ValueError:
+        return "", "Error: input must be integers separated by commas or spaces."
 
-import gr as gradio
-def gradio_user_interface(input_text):
-  #convert strings into a list of integers
-  parts = input_text.replace(",", " ").split()
-  try:
-    arr = [int(x) for x in parts]
-  except:
-    return ("Error: input must be integers seperated by commas or spaces")
+    steps: List[str] = []
+    sorted_a = mergesort(arr, steps)
+    return " ".join(map(str, sorted_a)), "\n".join(steps)
 
-  steps = []
-  sorted_a = mergesort(a,steps)
-
-  return str(sorted_a), "\n".join(steps)
 
 iface = gr.Interface(
     fn=gradio_merge_sort,
     inputs=gr.Textbox(label="Enter numbers (e.g. 5 2 8 1)", lines=1),
     outputs=[
-        gr.Textbox(label="Sorted Output"),
-        gr.Textbox(label="Merge Sort Steps", lines=20)
+        gr.Textbox(label="Sorted Output", lines=1),
+        gr.Textbox(label="Merge Sort Steps", lines=20),
     ],
     title="Merge Sort Visualizer",
-    description="Enter a list of numbers to see the merge sort process."
+    description="Enter a list of numbers to see the merge sort process.",
 )
 
-iface.launch()
 
-
-
-
-
-
+if __name__ == "__main__":
+    # When run directly, launch the UI. When imported (for tests), do not auto-launch.
+    iface.launch()
