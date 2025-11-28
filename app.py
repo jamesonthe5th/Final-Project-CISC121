@@ -46,8 +46,37 @@ def merge(left,right, steps):
     steps.append("Left list is empty \n Adding leftover element {right[i]} from right list to result {result}")
     j+=1
 
-
   steps.append("Merging complete. Final merged list: {result}")
+
+
+
+import gr as gradio
+def gradio_user_interface(input_text):
+  #convert strings into a list of integers
+  parts = input_text.replace(",", " ").split()
+  try:
+    arr = [int(x) for x in parts]
+  except:
+    return ("Error: input must be integers seperated by commas or spaces")
+
+  steps = []
+  sorted_a = mergesort(a,steps)
+
+  return str(sorted_a), "\n".join(steps)
+
+iface = gr.Interface(
+    fn=gradio_merge_sort,
+    inputs=gr.Textbox(label="Enter numbers (e.g. 5 2 8 1)", lines=1),
+    outputs=[
+        gr.Textbox(label="Sorted Output"),
+        gr.Textbox(label="Merge Sort Steps", lines=20)
+    ],
+    title="Merge Sort Visualizer",
+    description="Enter a list of numbers to see the merge sort process."
+)
+
+iface.launch()
+
 
 
 
