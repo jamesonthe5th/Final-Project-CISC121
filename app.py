@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 import gradio as gr
 
-def mergesort(a: List[int], steps: List[str]) -> List[int]:
+def mergesort(a, steps):
     """Takes an unsorted list and sorts it using merge sort while recording steps."""
     steps.append(f"Merge sort initiated on {a}")
 
@@ -18,17 +18,17 @@ def mergesort(a: List[int], steps: List[str]) -> List[int]:
     steps.append(f"Dividing into two halves\n Left half: {left}\n Right half: {right}")
 
     # recursive sorting part:
-    steps.append(f"Recursively sorting the left half: {left}")
+    steps.append(f"Sorting the left half: {left}")
     left_sort = mergesort(left, steps)
 
-    steps.append(f"Recursively sorting the right half: {right}")
+    steps.append(f"Sorting the right half: {right}")
     right_sort = mergesort(right, steps)
 
     return merge(left_sort, right_sort, steps)  # call other function to return merged list
 
-def merge(left: List[int], right: List[int], steps: List[str]) -> List[int]:
+def merge(left, right, steps):
     steps.append(f"Initiating the merge between the sorted left: {left} and right: {right} arrays")
-    result: List[int] = []
+    result = []
     i = j = 0
 
     while i < len(left) and j < len(right):
@@ -59,7 +59,7 @@ def merge(left: List[int], right: List[int], steps: List[str]) -> List[int]:
 
 import gradio as gr
 
-def gradio_merge_sort(input_text: str) -> Tuple[str, str]:
+def gradio_merge_sort(input_text: str):
     """Gradio wrapper: parses input_text into integers and runs mergesort with steps returned."""
     if not input_text or not input_text.strip():
         return "", "Error: input is empty. Enter integers separated by spaces or commas."
