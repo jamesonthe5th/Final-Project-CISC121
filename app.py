@@ -10,7 +10,7 @@ def mergesort(a: List[int], steps: List[str]) -> List[int]:
     if len(a) <= 1:
         steps.append(f"Reached length of 1 or 0 ({a}); list is already sorted; returning unchanged list")
         return a
-        print a# already sorted array
+        print (a)# already sorted array
 
     mid = len(a) // 2
     left = a[:mid]
