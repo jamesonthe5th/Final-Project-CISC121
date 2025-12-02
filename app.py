@@ -75,13 +75,13 @@ def gradio_merge_sort(input_text: str) -> Tuple[str, str]:
 
 iface = gr.Interface(
     fn=gradio_merge_sort,
-    inputs=gr.Textbox(label="Enter numbers (e.g. 5 2 8 1)", lines=1),
+    inputs=gr.Textbox(label="Enter numbers seperated by commas or spaces. (e.g. 5 2 8 1)", lines=1),
     outputs=[
         gr.Textbox(label="Sorted Output", lines=1),
         gr.Textbox(label="Merge Sort Steps", lines=20),
     ],
-    title="Merge Sort Visualizer",
-    description="Enter a list of numbers to see the merge sort process.",
+    title="Merge Sort App",
+    description="Enter a list of numbers to see the magic take place (merge sorting).",
 )
 
 
