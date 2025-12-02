@@ -18,10 +18,10 @@ def mergesort(a: List[int], steps: List[str]) -> List[int]:
     steps.append(f"Dividing into two halves\n Left half: {left}\n Right half: {right}")
 
     # recursive sorting part:
-    steps.append("Recursively sorting the left half: {left}")
+    steps.append(f"Recursively sorting the left half: {left}")
     left_sort = mergesort(left, steps)
 
-    steps.append(F"Recursively sorting the right half: {right}")
+    steps.append(f"Recursively sorting the right half: {right}")
     right_sort = mergesort(right, steps)
 
     return merge(left_sort, right_sort, steps)  # call other function to return merged list
