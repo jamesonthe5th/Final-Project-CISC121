@@ -54,6 +54,8 @@ def merge(left: List[int], right: List[int], steps: List[str]) -> List[int]:
     steps.append(f"Merging complete. Final merged list: {result}")
     return result
 
+import gradio as gr
+
 def gradio_merge_sort(input_text: str) -> Tuple[str, str]:
     """Gradio wrapper: parses input_text into integers and runs mergesort with steps returned."""
     if not input_text or not input_text.strip():
