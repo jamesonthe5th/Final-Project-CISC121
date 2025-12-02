@@ -55,6 +55,8 @@ def merge(left: List[int], right: List[int], steps: List[str]) -> List[int]:
     steps.append(f"Merging complete. Final merged list: {result}")
     return result
 
+
+
 import gradio as gr
 
 def gradio_merge_sort(input_text: str) -> Tuple[str, str]:
@@ -84,7 +86,6 @@ iface = gr.Interface(
     title="Merge Sort App",
     description="Enter a list of numbers to see the magic take place (merge sorting).",
 )
-
 
 if __name__ == "__main__":
     # When run directly, launch the UI. When imported (for tests), do not auto-launch.
