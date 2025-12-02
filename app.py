@@ -87,4 +87,4 @@ iface = gr.Interface(
 
 if __name__ == "__main__":
     # When run directly, launch the UI. When imported (for tests), do not auto-launch.
-    iface.launch()
+    iface.launch(share=True)
