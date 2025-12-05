@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-from typing import List, Tuple
 
 import gradio as gr
 
@@ -59,6 +57,33 @@ def merge(left, right, steps):
 
 import gradio as gr
 
+def run_collect(a):
+    steps =[]
+    sorted_list = mergesort(a.copy(),steps)
+    return sorted_list, steps
+
+def split_steps(input_text):
+    parts = input_text.replace(","," ").split()
+    list = [int(x) for x in parts]
+
+    sorted_list, steps = run_collect(a)
+
+    split_words = ["Initiated", "Dividing", "Left half", "Right half", "Sorting left half", "Sorting right half"]
+
+    split_log = [s for s in steps if any(k in s for k in split_words)]
+    return "\n".join(split_log)
+
+def merging_steps(input_text):
+    parts = input_text.replace(","," ")
+    list = [int(x) for x in parts]
+
+    sorted_list, steps = run_collect(a)
+
+    merge_words = ["Merge", "Comparing", "Adding to result", "Left list empty", "Right list empty", "Merging finished"]
+
+    merge_log = [s for s in steps if any(k in s for k in merge_words)]
+    return "\n".join(merge_log)
+
 def gradio_merge_sort(input_text: str):
     """Gradio wrapper: parses input_text into integers and runs mergesort with steps returned."""
     if not input_text or not input_text.strip():
@@ -71,20 +96,31 @@ def gradio_merge_sort(input_text: str):
     except ValueError:
         return "", "Error: input must be integers separated by commas or spaces."
 
-    steps: List[str] = []
+    steps = []
     sorted_a = mergesort(arr, steps)
-    return " ".join(map(str, sorted_a)), "\n".join(steps)
+
+    splitting = []
+    merging = []
+
+    for s in steps:
+        if ("Dividing" in s or "Initiated" in s or "Left half" in s or "Right half" in s or "Sorting left half" in s or "Sorting right half" in s):
+            splitting.append(s)
+
+        elif ("Merge" in s or "Comparing" in s or "Adding to result" in s or "Left list empty" in s or "Right list empty" in s or "Merging finished" in s):
+            merging.append(s)
+    return " ".join(map(str, sorted_a)), "\n".join(splitting), "\n".join(merging))
 
 
 iface = gr.Interface(
     fn=gradio_merge_sort,
-    inputs=gr.Textbox(label="Enter numbers seperated by commas or spaces. (e.g. 5 2 8 1)", lines=1),
+    inputs=gr.Textbox(label="Enter numbers seperated by commas or spaces. (e.g. 7 3 2 1 or 7,3,2,1)", lines=1),
     outputs=[
         gr.Textbox(label="Sorted Output", lines=1),
-        gr.Textbox(label="Merge Sort Steps", lines=20),
+        gr.Textbox(label="Splitting steps", lines = 20)
+        gr.Textbox(label="Merging Steps", lines=20),
     ],
     title="Merge Sort App",
-    description="Enter a list of numbers to see the magic take place (merge sorting).",
+    description="Enter a list of numbers to be sorted along with steps.",
 )
 
 if __name__ == "__main__":
