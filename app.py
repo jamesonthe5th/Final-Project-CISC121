@@ -108,7 +108,7 @@ def gradio_merge_sort(input_text: str):
 
         elif ("Merge" in s or "Comparing" in s or "Adding to result" in s or "Left list empty" in s or "Right list empty" in s or "Merging finished" in s):
             merging.append(s)
-    return " ".join(map(str, sorted_a)), "\n".join(splitting), "\n".join(merging))
+    return " ".join(map(str, sorted_a)), "\n".join(splitting), "\n".join(merging)
 
 
 iface = gr.Interface(
@@ -116,7 +116,7 @@ iface = gr.Interface(
     inputs=gr.Textbox(label="Enter numbers seperated by commas or spaces. (e.g. 7 3 2 1 or 7,3,2,1)", lines=1),
     outputs=[
         gr.Textbox(label="Sorted Output", lines=1),
-        gr.Textbox(label="Splitting steps", lines = 20)
+        gr.Textbox(label="Splitting steps", lines = 20),
         gr.Textbox(label="Merging Steps", lines=20),
     ],
     title="Merge Sort App",
