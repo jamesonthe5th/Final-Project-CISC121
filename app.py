@@ -1,30 +1,24 @@
 
 import gradio as gr
 import matplotlib.pyplot as plt
-
-# ----------------------------------------------------
-# MERGE SORT WITH STEP LOGGING
-# ----------------------------------------------------
+#MERGE SORTING WITH STEPS TO REFERENCE LINES
 
 def mergesort(a, steps, depth=0, parent_split_line=None, which=None):
-    indent = "    " * depth
-    steps.append(f"{indent}Merge sort initiated on {a}")
+    """THIS function sorts an inputted list using parent split line to know which line its and and which to know which half as well as depth for the depth indentation"""
+    indent = "    " * depth #indent for recursion depth
+    steps.append(f"{indent}Merge sort initiated on {a}") #steps
 
     if len(a) <= 1:
         steps.append(f"{indent}Reached length of 1 or 0 ({a}); list is already sorted; returning unchanged list")
         return a
 
-    # Split
+    # Split into two half
     mid = len(a) // 2
     left = a[:mid]
     right = a[mid:]
     split_index = len(steps)
 
-    steps.append(
-        f"{indent}Dividing into two halves\n"
-        f"{indent} Left half: {left}\n"
-        f"{indent} Right half: {right}"
-    )
+    steps.append(f"{indent}Dividing into two halves\n"f"{indent} Left half: {left}\n"f"{indent} Right half: {right}")
 
     # Sort Left
     steps.append(f"{indent}Sorting the left half: {left}")
@@ -34,16 +28,16 @@ def mergesort(a, steps, depth=0, parent_split_line=None, which=None):
     steps.append(f"{indent}Sorting the right half: {right}")
     right_sort = mergesort(right, steps, depth + 1, parent_split_line=split_index, which="right")
 
-    # Merge
+    # Merge left and right
     merged = merge(left_sort, right_sort, steps, depth)
     steps.append(f"{indent}Merge complete for {a}; sorted = {merged}")
 
-    if parent_split_line is not None and len(a) > 1:
+    if parent_split_line is not None and len(a) > 1: #base case to check the parent split line
         steps.append(f"{indent}Finished sorting {which} half {a}; created at line {parent_split_line + 1}")
 
     return merged
 
-
+#ACTUAL MERGE FUNCTION
 def merge(left, right, steps, depth):
     indent = "    " * depth
     steps.append(f"{indent}Initiating the merge between the sorted left: {left} and right: {right} arrays")
@@ -51,22 +45,22 @@ def merge(left, right, steps, depth):
     result = []
     i = j = 0
 
-    while i < len(left) and j < len(right):
+    while i < len(left) and j < len(right): #comparing left against right
         if left[i] < right[j]:
             result.append(left[i])
             steps.append(f"{indent}Comparing {left[i]} (left) and {right[j]} (right) → {left[i]} added")
             i += 1
-        else:
+        else: #comparign right against left
             result.append(right[j])
             steps.append(f"{indent}Comparing {right[j]} (right) and {left[i]} (left) → {right[j]} added")
             j += 1
 
-    while i < len(left):
+    while i < len(left): #adding leftover left values
         result.append(left[i])
         steps.append(f"{indent}Right list empty → adding leftover {left[i]} from left")
         i += 1
 
-    while j < len(right):
+    while j < len(right): #adding leftover right values
         result.append(right[j])
         steps.append(f"{indent}Left list empty → adding leftover {right[j]} from right")
         j += 1
@@ -75,23 +69,18 @@ def merge(left, right, steps, depth):
     return result
 
 
-# ----------------------------------------------------
-# MERGE SORT DRIVER
-# ----------------------------------------------------
-
+#MERGE SORT COLLECT AND LINE NUMBERS
 def run_collect(a):
     steps = []
-    sorted_list = mergesort(a.copy(), steps)
+    sorted_list = mergesort(a.copy(), steps) #collecting steps from array
     return sorted_list, steps
 
 
 def format_line_numbers(steps):
-    return [f"{i + 1}: {s}" for i, s in enumerate(steps)]
+    return [f"{i + 1}: {s}" for i, s in enumerate(steps)] #adding line numbers
 
 
-# ----------------------------------------------------
-# TREE BUILDING FOR IMAGE
-# ----------------------------------------------------
+#TREE BUILD FOR IMAGE
 
 def build_tree(a):
     # base case
@@ -99,21 +88,21 @@ def build_tree(a):
         return (str(a), None, None)
 
     mid = len(a) // 2
-
-    # get sorted version for this sublist (uses your run_collect which runs mergesort)
+    #getting a sorted sublist
     sorted_a, _ = run_collect(a)
 
-    # also get the sorted halves so children reflect the sorted order
-    # note: run_collect(left) returns (sorted_left, steps), so we take sorted_left
+       #getting sorted halves for tree
     left_sorted, _ = run_collect(a[:mid])
     right_sorted, _ = run_collect(a[mid:])
 
-    # build children from the *sorted halves* so leaf positions match merge order
+    #building tree so leaf postitions match algorithm order
     left_node = build_tree(left_sorted)
     right_node = build_tree(right_sorted)
 
-    # label this node with the fully sorted sublist
+    #return the nodes and sorted string
     return (str(sorted_a), left_node, right_node)
+
+#collecting nodes for the tree ie each branch
 
 def collect_nodes(node, nodes=None):
     if nodes is None:
@@ -128,7 +117,7 @@ def collect_nodes(node, nodes=None):
 
     return nodes
 
-
+#giving nodes positions 
 def assign_positions(node, x=0.5, y=1.0, layer=0, coords=None):
     if coords is None:
         coords = {}
@@ -143,7 +132,7 @@ def assign_positions(node, x=0.5, y=1.0, layer=0, coords=None):
         assign_positions(right, x + spacing, y - 0.13, layer + 1, coords)
 
     return coords
-
+#plotting the actual tree
 
 def plot_tree(node, filename="recursion_tree.png"):
     coords = assign_positions(node)
@@ -170,21 +159,13 @@ def plot_tree(node, filename="recursion_tree.png"):
         value, left, right = n
         x, y = coords[n]
 
-        ax.text(
-            x, y, value,
-            ha="center", va="center",
-            bbox=dict(boxstyle="round", facecolor="white"),
-            fontsize=9
-        )
+        ax.text(x, y, value,ha="center", va="center",bbox=dict(boxstyle="round", facecolor="white"),fontsize=9)
 
     fig.savefig(filename, dpi=150, bbox_inches="tight")
     plt.close(fig)
     return filename
 
-
-# ----------------------------------------------------
-# GRADIO WRAPPER
-# ----------------------------------------------------
+#Gradio merging with extra base case and edge case checks
 
 def gradio_merge_sort(input_text):
     if not input_text or not input_text.strip():
@@ -201,24 +182,12 @@ def gradio_merge_sort(input_text):
     numbered = format_line_numbers(steps)
 
     # Split logs
-    split_keywords = [
-        "Merge sort initiated",
-        "Dividing",
-        "Sorting the left half",
-        "Sorting the right half",
-        "Finished sorting"
-    ]
+    split_keywords = ["Merge sort initiated","Dividing","Sorting the left half","Sorting the right half","Finished sorting"]
 
     splitting = [s for s in numbered if any(k in s for k in split_keywords)]
 
     # Merge logs
-    merge_keywords = [
-        "Initiating the merge",
-        "Comparing",
-        "leftover",
-        "Merging complete",
-        "Merge complete"
-    ]
+    merge_keywords = ["Initiating the merge","Comparing","leftover","Merging complete","Merge complete"]
 
     merging = [s for s in numbered if any(k in s for k in merge_keywords)]
 
@@ -227,17 +196,9 @@ def gradio_merge_sort(input_text):
     img_path = "recursion_tree.png"
     plot_tree(tree, filename=img_path)
 
-    return (
-        " ".join(map(str, sorted_a)),
-        "\n".join(splitting),
-        "\n".join(merging),
-        img_path
-    )
+    return ( " ".join(map(str, sorted_a)),"\n".join(splitting),"\n".join(merging),img_path)
 
-
-# ----------------------------------------------------
-# GRADIO INTERFACE
-# ----------------------------------------------------
+#GRADIO UI
 
 iface = gr.Interface(
     fn=gradio_merge_sort,
