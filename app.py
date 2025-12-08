@@ -1,31 +1,42 @@
 
 import gradio as gr
 
-def mergesort(a, steps):
+def mergesort(a, steps, depth = 0, parent_split_line=None, which = None):
     """Takes an unsorted list and sorts it using merge sort while recording steps."""
-    steps.append(f"Merge sort initiated on {a}")
+    indent = "   " * depth
+    steps.append(f"{indent}Merge sort initiated on {a}")
+    
 
     if len(a) <= 1:
-        steps.append(f"Reached length of 1 or 0 ({a}); list is already sorted; returning unchanged list")
-        return a
-        print (a)# already sorted array
+        steps.append(f"{indent}Reached length of 1 or 0 ({a}); list is already sorted; returning unchanged list")
+        if parent_split_line is not None :
+            steps.append(f"{indent}Finished sorting {which} half {a}; created at line {parent_split_line +1}") #referencing which line it came from 
+        return a# already sorted array
 
     mid = len(a) // 2
     left = a[:mid]
     right = a[mid:]  # split into two halves
-    steps.append(f"Dividing into two halves\n Left half: {left}\n Right half: {right}")
+    split_index = len(steps)
+    steps.append(f"{indent}Dividing into two halves\n {indent} Left half: {left}\n {indent} Right half: {right}")
 
     # recursive sorting part:
-    steps.append(f"Sorting the left half: {left}")
-    left_sort = mergesort(left, steps)
+    steps.append(f"{indent} Sorting the left half: {left}")
+    left_sort = mergesort(left, steps, depth +1, parent_split_line = split_index, which = "left")
 
-    steps.append(f"Sorting the right half: {right}")
-    right_sort = mergesort(right, steps)
+    steps.append(f"{indent}Sorting the right half: {right}")
+    right_sort = mergesort(right, steps, depth +1, parent_split_line = split_index, which = "right")
 
-    return merge(left_sort, right_sort, steps)  # call other function to return merged list
+    merged = merge(left_sort, right_sort, steps, depth)
+    steps.append(f"{indent} Merge complete for {a}; sorted = {merged}")
 
-def merge(left, right, steps):
-    steps.append(f"Initiating the merge between the sorted left: {left} and right: {right} arrays")
+    if parent_split_line is not None:
+        steps.append(f"{indent} Finished sorting {which} half {a}; created at line {parent_split_line +1}")
+
+    return merged # call other function to return merged list
+
+def merge(left, right, steps, depth):
+    indent = "    " * depth
+    steps.append(f"{indent}Initiating the merge between the sorted left: {left} and right: {right} arrays")
     result = []
     i = j = 0
 
@@ -33,24 +44,24 @@ def merge(left, right, steps):
         # compare elements and append the smaller
         if left[i] < right[j]:
             result.append(left[i])
-            steps.append(f"Comparing {left[i]} (left) and {right[j]} (right) -> {left[i]} is smaller; adding to result: {result}")
+            steps.append(f"{indent}Comparing {left[i]} (left) and {right[j]} (right) -> {left[i]} (left) is smaller; adding to result: {result}")
             i += 1
         else:
             result.append(right[j])
-            steps.append(f"Comparing {right[j]} (right) and {left[i]} (left) -> {right[j]} is smaller; adding to result: {result}")
+            steps.append(f"{indent}Comparing {right[j]} (right) and {left[i]} (left) -> {right[j]} (right) is smaller; adding to result: {result}")
             j += 1
 
     while i < len(left):
         result.append(left[i])
-        steps.append(f"Right list is empty; adding leftover element {left[i]} from left list to result {result}")
+        steps.append(f"{indent}Right list is empty; adding leftover element {left[i]} from left list to result {result}")
         i += 1
 
     while j < len(right):
         result.append(right[j])
-        steps.append(f"Left list is empty; adding leftover element {right[j]} from right list to result {result}")
+        steps.append(f"{indent}Left list is empty; adding leftover element {right[j]} from right list to result {result}")
         j += 1
 
-    steps.append(f"Merging complete. Final merged list: {result}")
+    steps.append(f"{indent} Merging complete. Final merged list: {result}")
     return result
 
 
@@ -62,29 +73,45 @@ def run_collect(a):
     sorted_list = mergesort(a.copy(),steps)
     return sorted_list, steps
 
+def format_line_numbers(steps):
+    return [f"{i +1}: {s}" for i,s in enumerate(steps)]
+    
 def split_steps(input_text):
-    parts = input_text.replace(","," ").split()
-    list = [int(x) for x in parts]
+    """Return only the splitting-related steps (with line numbers) for the given input_text."""
+    if not input_text or not input_text.strip():
+        return "Error: input is empty. Enter integers separated by spaces or commas."
 
-    sorted_list, steps = run_collect(a)
-
-    split_words = ["Initiated", "Dividing", "Left half", "Right half", "Sorting left half", "Sorting right half"]
-
-    split_log = [s for s in steps if any(k in s for k in split_words)]
+    parts = input_text.replace(",", " ").split()
+    try:
+        arr = [int(x) for x in parts]
+    except ValueError:
+        return "Error: input must be integers separated by commas or spaces."
+    steps = run_collect(a)
+    numbered = format_line_numbers(steps)
+    
+    split_keywords = ["Dividing", "Sorting the left half", "Sorting the right half", "Merge sort initiated", "Finished sorting"]
+    split_log = [line for line in numbered if any(k in line for k in split_keywords)]
     return "\n".join(split_log)
 
 def merging_steps(input_text):
-    parts = input_text.replace(","," ")
-    list = [int(x) for x in parts]
+    """Return only the merging-related steps (with line numbers) for the given input_text."""
+    if not input_text or not input_text.strip():
+        return "Error: input is empty. Enter integers separated by spaces or commas."
 
-    sorted_list, steps = run_collect(a)
+    parts = input_text.replace(",", " ").split()
+    try:
+        arr = [int(x) for x in parts]
+    except ValueError:
+        return "Error: input must be integers separated by commas or spaces."
+    steps = run_collect(a)
+    numbered = format_line_numbers(steps)
 
-    merge_words = ["Merge", "Comparing", "Adding to result", "Left list empty", "Right list empty", "Merging finished"]
-
-    merge_log = [s for s in steps if any(k in s for k in merge_words)]
+    # keywords that indicate merging operations
+    merge_keywords = ["Initiating merge", "Comparing", "Adding leftover", "Merging complete", "Merge complete"]
+    merge_log = [line for line in numbered if any(k in line for k in merge_keywords)]
     return "\n".join(merge_log)
 
-def gradio_merge_sort(input_text: str):
+def gradio_merge_sort(input_text):
     """Gradio wrapper: parses input_text into integers and runs mergesort with steps returned."""
     if not input_text or not input_text.strip():
         return "", "Error: input is empty. Enter integers separated by spaces or commas."
@@ -96,11 +123,9 @@ def gradio_merge_sort(input_text: str):
     except ValueError:
         return "", "Error: input must be integers separated by commas or spaces."
 
-    steps = []
-    sorted_a = mergesort(arr, steps)
+    sorted_a, steps = run_collect(a)
+    numbered = format_line_numbers(steps)
 
-    splitting = []
-    merging = []
 
     for s in steps:
         if ("Dividing" in s or "Initiated" in s or "Left half" in s or "Right half" in s or "Sorting left half" in s or "Sorting right half" in s):
