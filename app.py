@@ -83,7 +83,7 @@ def split_steps(input_text):
 
     parts = input_text.replace(",", " ").split()
     try:
-        arr = [int(x) for x in parts]
+        a = [int(x) for x in parts]
     except ValueError:
         return "Error: input must be integers separated by commas or spaces."
     steps = run_collect(a)
@@ -100,7 +100,7 @@ def merging_steps(input_text):
 
     parts = input_text.replace(",", " ").split()
     try:
-        arr = [int(x) for x in parts]
+        a = [int(x) for x in parts]
     except ValueError:
         return "Error: input must be integers separated by commas or spaces."
     steps = run_collect(a)
@@ -116,10 +116,13 @@ def gradio_merge_sort(input_text):
     if not input_text or not input_text.strip():
         return "", "Error: input is empty. Enter integers separated by spaces or commas."
 
+    splitting = []
+    merging =[]
+
     # accept commas or spaces as separators
     parts = input_text.replace(",", " ").split()
     try:
-        arr = [int(x) for x in parts]
+        a = [int(x) for x in parts]
     except ValueError:
         return "", "Error: input must be integers separated by commas or spaces."
 
@@ -128,8 +131,11 @@ def gradio_merge_sort(input_text):
 
 
     for s in steps:
-        if ("Dividing" in s or "Initiated" in s or "Left half" in s or "Right half" in s or "Sorting left half" in s or "Sorting right half" in s):
-            splitting.append(s)
+        if ("Dividing" in s or 
+            "Sorting the left half" in s or 
+            "Sorting the right half" in s or 
+            "Merge sort initiated" in s or
+            "Finished sorting" in s):
 
         elif ("Merge" in s or "Comparing" in s or "Adding to result" in s or "Left list empty" in s or "Right list empty" in s or "Merging finished" in s):
             merging.append(s)
