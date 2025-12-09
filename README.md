@@ -14,6 +14,10 @@ Long list: descending
 <img width="1669" height="1007" alt="Screenshot 2025-12-09 at 12 47 19 PM" src="https://github.com/user-attachments/assets/2f720b18-084a-46c2-b85f-cc0ed403d035" />
 <img width="928" height="551" alt="Screenshot 2025-12-09 at 12 47 29 PM" src="https://github.com/user-attachments/assets/1b540058-3869-48ee-a357-8f1c5c8e3a4c" />
 
+Empty Input:
+<img width="1715" height="617" alt="Screenshot 2025-12-09 at 12 50 59 PM" src="https://github.com/user-attachments/assets/1effa18e-f1f3-4873-a791-fb11877a95d7" />
+
+
 Algorithm selected:
 I chose to use merge sort for my algorithm of choice because first it is quite good at dealing with larger input sizes as it has a time complexity of O(nlogn).
 - It also demonstrates a divide and conquer algorithm which I understand more than other algorithms. 
