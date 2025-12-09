@@ -72,3 +72,10 @@ wait to load
 insert list of numbers (no strings or floats)
 
 Hugging Face Link:
+
+
+Author and AI Acknowledgement:
+I Nathan Carter am the author of this. AI interfaces helped me throughout this project and I am going to list them:
+To create my visual representation I did not know much about matplotlib except from my past physics course PHYS 104, I watched a video to get a basic understanding of nodes and then asked chat gpt to help me create a visual representation of my algorithm to output to Gradio. It helped me with the structure and a lot of the complex code that I had never seen before Video I watched: https://www.youtube.com/watch?v=UO98lJQ3QGI 
+
+I also used chat gpt to help me integrate the lines into each step so that the user could easily reference where the outputs were coming from. This took form of a prompt like help me add line numbers to a piece of code. I also used AI to add my steps and learn about the keywords needed during this and how python would detect them. 
