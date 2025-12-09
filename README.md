@@ -31,15 +31,18 @@ final sorted list
 
 Algorithm design for merge sort:
 Input:
-box with commas for separations of integers eg our list
+a list of values of integer type seperated by spaces or commas.
 Output:
-The gradio GUI of the merges the split steps the comparisions and the newly formed list and final list
+Gradio will output a final sorted value in ascending order, the merge sort steps and the merging steps along with a visual representation of the actual code and line numbers for easy referencing from where values came from. 
 Flow chart:
 [User enters list through GUI]
 [Call Merge_sort algorithm with snapshots]
 [Base case len(list0) == 1 or 0]
-yes [return list]
-no [split into left and right]
-[Compare values using pointers]
-[append to final list]
-[return]
+yes [return list] (document in steps)
+no [split into left and right] (document in steps)
+[continue splitting until base case reached] (documented in steps)
+[Call merging algorithm] (documented in steps)
+[Compare values using pointers] (documented in steps)
+[The smaller value of left[i] or right[j] will be appeneded to the resulting list] (documented)
+[Once one side (left or right) is empty, algorithm will append all leftover elements] (documented)
+[return result](documented)
